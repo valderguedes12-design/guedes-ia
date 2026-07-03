@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="refresh" content="0; url=ia/index.html" />
+  <title>Guedes Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #06111f;
+      --bg-2: #0b1a2f;
+      --panel: rgba(13, 26, 46, 0.82);
+      --line: rgba(143, 191, 255, 0.16);
+      --text: #eef5ff;
+      --muted: #9cb2ce;
+      --accent: #6ee7ff;
+      --accent-2: #82f7b8;
+      --shadow: 0 24px 80px rgba(0, 0, 0, 0.46);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; }
+    body {
+      font-family: 'Inter', sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(110, 231, 255, 0.18), transparent 30%),
+        radial-gradient(circle at right 10%, rgba(130, 247, 184, 0.14), transparent 28%),
+        linear-gradient(135deg, #04101c 0%, var(--bg) 52%, var(--bg-2) 100%);
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 36px 36px;
+      opacity: 0.32;
+      mask-image: radial-gradient(circle at center, black 35%, transparent 100%);
+    }
+
+    .wrap {
+      width: min(1100px, calc(100% - 32px));
+      margin: 16px auto;
+      min-height: calc(100vh - 32px);
+      display: grid;
+      place-items: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .card {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 30px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+      padding: 28px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .brand {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    .mark {
+      width: 62px;
+      height: 62px;
+      border-radius: 18px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(145deg, rgba(110, 231, 255, 0.96), rgba(130, 247, 184, 0.9));
+      color: #04111d;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 800;
+      font-size: 24px;
+    }
+
+    h1, h2, h3 { margin: 0; font-family: 'Space Grotesk', sans-serif; }
+    h1 { font-size: clamp(34px, 4vw, 58px); line-height: 0.95; letter-spacing: -0.04em; }
+    .lead { margin: 14px 0 0; color: var(--muted); line-height: 1.7; max-width: 60ch; }
+
+    .chips { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.03);
+      color: var(--text);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 600;
+      transition: transform 0.18s ease, background 0.18s ease, border-color 0.18s ease;
+    }
+
+    .chip:hover { transform: translateY(-1px); border-color: rgba(110,231,255,0.35); background: rgba(110,231,255,0.08); }
+
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      background: rgba(7, 16, 28, 0.5);
+      padding: 20px;
+    }
+
+    .panel + .panel { margin-top: 14px; }
+
+    .panel h2 { font-size: 20px; margin-bottom: 10px; }
+    .panel p { margin: 0; color: var(--muted); line-height: 1.7; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .tile {
+      padding: 18px;
+      border-radius: 20px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.03);
+    }
+
+    .tile b { display: block; font-size: 18px; margin-bottom: 6px; }
+    .tile span { color: var(--muted); font-size: 13px; line-height: 1.5; }
+
+    .footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    @media (max-width: 900px) {
+      .hero { grid-template-columns: 1fr; }
+      .grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="card">
+      <div class="brand">
+        <div class="mark">GH</div>
+        <div>
+          <h3>Guedes Hub</h3>
+          <p style="margin:4px 0 0;color:var(--muted);">Portal principal para GitHub Pages</p>
+        </div>
+      </div>
+
+      <div class="hero">
+        <div>
+          <h1>Seu site pronto para publicar na internet.</h1>
+          <p class="lead">Abra a IA, a cobrança ou a página de assistência a partir daqui. Esta página raiz já funciona como entrada principal para o GitHub Pages.</p>
+
+          <div class="chips">
+            <a class="chip" href="ia/index.html">Abrir Guedes IA</a>
+            <a class="chip" href="assistencia_guedes%20(1).html">Assistência Guedes</a>
+            <a class="chip" href="cobranca.html">Cobrança</a>
+          </div>
+
+          <div class="footer">
+            <span>Pronto para GitHub Pages, Netlify e Vercel.</span>
+            <span>Respostas com fonte confiável e navegação local.</span>
+          </div>
+        </div>
+
+        <div>
+          <div class="panel">
+            <h2>O que já está funcionando</h2>
+            <p>A IA responde perguntas comuns, mostra links de fontes confiáveis e já foi preparada para publicação estática.</p>
+          </div>
+          <div class="panel">
+            <h2>Publicação recomendada</h2>
+            <p>Coloque este repositório no GitHub e ative o GitHub Pages apontando para a branch principal.</p>
+          </div>
+          <div class="grid">
+            <div class="tile">
+              <b>IA</b>
+              <span>Respostas automáticas com consultas públicas e casos diretos.</span>
+            </div>
+            <div class="tile">
+              <b>Site</b>
+              <span>Página principal pensada para abrir no navegador sem configuração extra.</span>
+            </div>
+            <div class="tile">
+              <b>Deploy</b>
+              <span>Ideal para GitHub Pages com arquivos estáticos.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

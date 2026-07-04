@@ -786,8 +786,32 @@
         return 'A capital de Portugal � Lisboa.';
       }
       if (normalized.includes('capital da fran�a') || normalized.includes('capital da franca')) {
-        return 'A capital da Fran�a � Paris.';
+        return 'A capital da França é Paris.';
       }
+
+      if (
+        normalized.includes('chatbots prontos') ||
+        normalized.includes('chatbot pronto') ||
+        normalized.includes('copilot') ||
+        normalized.includes('chatgpt') ||
+        normalized.includes('bing chat') ||
+        normalized.includes('apis de ia') ||
+        normalized.includes('api de ia') ||
+        normalized.includes('assistentes virtuais') ||
+        normalized.includes('dialogflow') ||
+        normalized.includes('bot framework') ||
+        normalized.includes('low-code') ||
+        normalized.includes('low code')
+      ) {
+        return [
+          'Existem quatro caminhos comuns para usar IA hoje:',
+          '1. Chatbots prontos: plataformas como Microsoft Copilot, ChatGPT e Bing Chat já funcionam como IA de perguntas e respostas; você só precisa acessar e usar.',
+          '2. APIs de IA: serviços como OpenAI, Azure AI e Hugging Face oferecem APIs. Você cria uma chave de acesso e integra em um site ou aplicativo sem treinar nada.',
+          '3. Assistentes virtuais: ferramentas como Dialogflow (Google) ou Bot Framework (Microsoft) permitem montar um chatbot pronto em poucas etapas, sem precisar programar modelos de linguagem.',
+          '4. Plataformas low-code: existem soluções que permitem criar IA com interface gráfica, arrastando blocos de lógica, sem precisar escrever código complexo.'
+        ].join('\n\n');
+      }
+
       return null;
     }
 

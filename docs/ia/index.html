@@ -164,7 +164,8 @@
       gap: 10px;
     }
 
-    .chip {
+    .chip,
+    .mode-chip {
       border: 1px solid var(--line);
       background: rgba(255,255,255,0.03);
       color: var(--text);
@@ -176,10 +177,17 @@
       transition: transform 0.18s ease, background 0.18s ease, border-color 0.18s ease;
     }
 
-    .chip:hover {
+    .chip:hover,
+    .mode-chip:hover {
       transform: translateY(-1px);
-      border-color: rgba(110, 231, 255, 0.4);
+      border-color: rgba(110, 231, 255, 0.35);
       background: rgba(110, 231, 255, 0.08);
+    }
+
+    .mode-chip.selected {
+      background: rgba(110, 231, 255, 0.16);
+      border-color: rgba(110, 231, 255, 0.45);
+      color: #dbeafe;
     }
 
     .card {
@@ -275,9 +283,7 @@
 
     .topbar h2 {
       margin: 0;
-      font-family: 'Space Grotesk', sans-serif;
       font-size: 22px;
-      letter-spacing: -0.03em;
     }
 
     .topbar small {
@@ -500,7 +506,7 @@
         <div class="brand-mark">IA</div>
         <div>
           <h1>Guedes IA</h1>
-          <p>Assistente local com respostas rápidas, útil para atendimento, ideias e suporte.</p>
+          <p>Assistente Copilot com várias personalidades integradas para responder a tudo.</p>
         </div>
       </div>
 
@@ -509,21 +515,27 @@
           <div class="pulse"></div>
           <div>
             <strong>Online e pronta</strong>
-            <span>sem backend, rodando no navegador</span>
+            <span>escolha um modo e comece a conversar</span>
           </div>
         </div>
       </div>
 
       <div class="card">
+        <h2>Modo IA</h2>
+        <p>Escolha um perfil diferente para personalizar a resposta da IA.</p>
+        <div class="chip-row" id="modeChips"></div>
+      </div>
+
+      <div class="card">
         <h2>Atalhos</h2>
-        <p>Clique em um tema para iniciar a conversa com um exemplo de uso.</p>
+        <p>Clique em um tema para iniciar uma conversa com um exemplo pronto.</p>
         <div class="chip-row" id="chips"></div>
       </div>
 
       <div class="card">
-        <h2>O que ela faz</h2>
-          <p>Responde perguntas simples, sugere próximos passos e pode servir como base para integrar uma API de IA real depois.</p>
-          <div class="source-list" id="sourceList"></div>
+        <h2>Fontes confiáveis</h2>
+        <p>Use esses links como referência rápida para validar temas e notícias.</p>
+        <div class="source-list" id="sourceList"></div>
       </div>
 
       <div class="metric-grid">
@@ -532,8 +544,8 @@
           <span>mensagens na conversa</span>
         </div>
         <div class="metric">
-          <b>100%</b>
-          <span>funciona offline no HTML</span>
+          <b id="currentModeLabel">Copilot</b>
+          <span>modo ativo</span>
         </div>
       </div>
     </aside>
@@ -542,21 +554,21 @@
       <header class="topbar">
         <div>
           <h2>Assistente de conversa</h2>
-          <small>Digite sua dúvida e receba uma resposta contextual em tempo real.</small>
+          <small>Um painel multi-IA local no navegador, com modos de atendimento, vendas, pesquisa e ideias.</small>
         </div>
-        <div class="tag">IA Demo • pronta para personalizar</div>
+        <div class="tag" id="modeTag">Modo: Copilot</div>
       </header>
 
       <div class="chat" id="chat"></div>
 
       <div class="composer">
         <div class="composer-bar">
-          <textarea id="input" placeholder="Escreva algo como: quero ajuda para divulgar minha assistência técnica"></textarea>
+          <textarea id="input" placeholder="Digite sua pergunta, pedido de texto ou ideia para atendimento."></textarea>
           <button class="send" id="sendBtn">Enviar</button>
         </div>
         <div class="footer-note">
-          <span>Pressione <strong>Enter</strong> para enviar, <strong>Shift+Enter</strong> para quebrar linha.</span>
-          <span id="tip">Exemplo: peça um texto, ideia de atendimento ou resumo.</span>
+          <span>Pressione <strong>Enter</strong> para enviar, <strong>Shift+Enter</strong> para nova linha.</span>
+          <span id="tip">Dica: escolha um modo antes de perguntar para resultados mais precisos.</span>
         </div>
       </div>
     </section>
@@ -570,6 +582,19 @@
     const chips = document.getElementById('chips');
     const tip = document.getElementById('tip');
     const sourceList = document.getElementById('sourceList');
+    const modeChips = document.getElementById('modeChips');
+    const modeTag = document.getElementById('modeTag');
+    const currentModeLabel = document.getElementById('currentModeLabel');
+
+    const modes = [
+      { id: 'copilot', label: 'Copilot', description: 'Foco em soluções práticas, explicações e tarefas rápidas.' },
+      { id: 'atendimento', label: 'Atendimento', description: 'Respostas gentis, orientadas ao cliente e ao suporte.' },
+      { id: 'vendas', label: 'Vendas', description: 'Textos persuasivos e sugestões para promover serviços.' },
+      { id: 'pesquisa', label: 'Pesquisa', description: 'Busca de fatos, referências e fontes confiáveis.' },
+      { id: 'criativa', label: 'Criativa', description: 'Respostas inventivas, ideias e conteúdo original.' }
+    ];
+
+    let currentMode = 'copilot';
 
     const quickPrompts = [
       'Me ajude a divulgar minha assistência técnica',
@@ -595,33 +620,29 @@
     ]);
 
     const seedReplies = {
-      default: [
-        'Posso ajudar com divulgação, atendimento, textos, organização e ideias rápidas. Tente pedir algo específico e eu monto a resposta.',
-        'Se quiser, posso transformar sua ideia em uma mensagem para WhatsApp, um roteiro de atendimento ou um texto de venda.'
+      copilot: [
+        'Como seu assistente Copilot, posso te ajudar a resolver tarefas, criar textos e responder dúvidas com clareza.',
+        'Vamos transformar sua pergunta em uma solução prática e organizada. Me diga o que precisa.'
       ],
       atendimento: [
-        'Para atendimento, recomendo uma resposta curta, clara e com próxima ação. Exemplo: "Olá! Podemos te ajudar agora. Me envie seu nome e o que você precisa."',
-        'Se o cliente estiver com urgência, vale confirmar o problema, informar o próximo passo e passar um prazo objetivo.'
+        'No modo atendimento, vou sugerir respostas gentis, claras e voltadas ao cliente.',
+        'Fico pronto para ajudar com agendamento, suporte e orientação em linguagem simples.'
       ],
-      whatsapp: [
-        'Mensagem pronta para WhatsApp: "Olá! Tudo bem? Somos da Guedes IA e podemos te ajudar com suporte, manutenção e orientações rápidas."',
-        'Se quiser, eu também posso adaptar o texto para algo mais formal, curto ou comercial.'
+      vendas: [
+        'Modo vendas ativo: vou gerar textos com tom persuasivo, focados em conversão e valor.',
+        'Preciso de pouco para criar um texto comercial que chame atenção do cliente.'
       ],
-      divulgacao: [
-        'Uma boa divulgação mistura benefício e ação. Exemplo: "Seu celular com problema? Fale com a gente e receba atendimento rápido e garantia no serviço."',
-        'Se quiser mais alcance, eu posso criar legenda, anúncio, status e texto para cartão de visita.'
+      pesquisa: [
+        'Modo pesquisa ativo: vou tentar buscar fatos e fontes confiáveis para sua pergunta.',
+        'Se houver resposta factual, vou mostrar título, resumo e link para referência.'
       ],
-      cobranca: [
-        'Cobrança educada: "Olá! Passando para lembrar sobre o andamento do seu atendimento. Se precisar, posso te atualizar por aqui."',
-        'O melhor tom é firme, educado e objetivo. Evite mensagem longa demais.'
-      ],
-      geral: [
-        'Posso responder de forma direta, explicar por partes ou transformar sua pergunta em um passo a passo prático.',
-        'Se a pergunta for sobre um fato atual, eu também posso te mostrar buscas em fontes confiáveis para conferir a informação.'
+      criativa: [
+        'Modo criativa ativo: respondo com ideias originais, títulos e propostas diferentes.',
+        'Peça uma frase criativa, slogan ou conceito e eu crio algo novo.'
       ]
     };
 
-    const welcomeMessage = 'Olá! Eu sou a Guedes IA. Escreva uma dúvida ou clique em um atalho para começar.';
+    const welcomeMessage = 'Olá! Eu sou a Guedes IA. Escolha um modo e escreva sua dúvida para receber uma resposta ajustada ao seu objetivo.';
 
     function updateCount() {
       msgCount.textContent = String(chat.querySelectorAll('.message').length);
@@ -678,14 +699,21 @@
       return text
         .toLowerCase()
         .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '');
+        .replace(/[]/g, (c) => c)
+        .replace(/[]/g, (c) => c)
+        .replace(/[]/g, (c) => c)
+        .replace(/[]/g, (c) => c)
+        .replace(/[]/g, (c) => c)
+        .replace(/[]/g, (c) => c)
+        .replace(/[]/g, (c) => c)
+        .replace(/[]/g, '');
     }
 
     function extractKeywords(text) {
       const words = normalizeText(text)
         .replace(/[^a-z0-9\s]/g, ' ')
         .split(/\s+/)
-        .filter((word) => word.length > 2 && !stopWords.has(word));
+        .filter((word) => word.length > 2 ; !stopWords.has(word));
 
       const uniqueWords = [];
       for (const word of words) {
@@ -735,89 +763,67 @@
     }
 
     function detectTopic(text) {
-      const value = normalizeText(text);
-      if (value.includes('quem') || value.includes('qual') || value.includes('quando') || value.includes('onde') || value.includes('por que') || value.includes('porque') || value.includes('como')) return 'geral';
-      if (value.includes('whatsapp') || value.includes('mensagem')) return 'whatsapp';
-      if (value.includes('atendimento') || value.includes('cliente')) return 'atendimento';
-      if (value.includes('divul') || value.includes('anúncio') || value.includes('anuncio') || value.includes('marketing')) return 'divulgacao';
-      if (value.includes('cobran') || value.includes('pagamento') || value.includes('lembrete')) return 'cobranca';
+      const value = text.toLowerCase();
+      if (value.includes('whatsapp') ; value.includes('mensagem')) return 'whatsapp';
+      if (value.includes('atendimento') ; value.includes('cliente')) return 'atendimento';
+      if (value.includes('divul') ; value.includes('anúncio') ; value.includes('anuncio') ; value.includes('marketing')) return 'divulgacao';
+      if (value.includes('cobran') ; value.includes('pagamento') ; value.includes('lembrete')) return 'cobranca';
+      if (value.match(/\b(quem|qual|quais|quando|onde|como|por que|porque)\b/)) return 'geral';
       return 'default';
     }
 
     function needsFactCheck(text) {
-      const normalized = normalizeText(text);
+      const normalized = text.toLowerCase();
       const keywordCount = extractKeywords(text).length;
       if (/^(quem|qual|quais|quando|onde|como|por que|porque)\b/.test(normalized)) {
         return true;
       }
-
-      return keywordCount >= 3 || normalized.includes('?');
+      return keywordCount >= 3 ; normalized.includes('?');
     }
 
     function directAnswer(text) {
-      const normalized = normalizeText(text);
-
-      if (normalized.includes('quem e o presidente do brasil') || normalized.includes('quem e presidente do brasil') || normalized.includes('presidente do brasil')) {
-        return 'O presidente do Brasil é Luiz Inácio Lula da Silva, o Lula. Se quiser, eu também posso responder com o nome completo ou com uma explicação mais curta.';
+      const normalized = text.toLowerCase();
+      if (normalized.includes('presidente do brasil')) {
+        return 'O presidente do Brasil é Luiz Inácio Lula da Silva, o Lula. Se quiser, posso contar mais sobre o governo ou a política atual.';
       }
-
-      if (normalized.includes('qual e a capital do brasil') || normalized.includes('capital do brasil')) {
+      if (normalized.includes('capital do brasil')) {
         return 'A capital do Brasil é Brasília.';
       }
-
-      if (normalized.includes('qual e a capital de portugal') || normalized.includes('capital de portugal')) {
+      if (normalized.includes('capital de portugal')) {
         return 'A capital de Portugal é Lisboa.';
       }
-
-      if (normalized.includes('qual e a capital da franca') || normalized.includes('capital da franca')) {
+      if (normalized.includes('capital da frança')) {
         return 'A capital da França é Paris.';
       }
-
       return null;
     }
 
     async function fetchDuckDuckGoAnswer(query) {
       try {
-        const url = `https://api.duckduckgo.com/?q=${encodeURIComponent(query)}&format=json&no_redirect=1&no_html=1&skip_disambig=1`;
+        const url = `https://api.duckduckgo.com/?q=${encodeURIComponent(query)}&format=json;&no_redirect=1;&no_html=1;&skip_disambig=1`;
         const response = await fetch(url, { mode: 'cors' });
-
-        if (!response.ok) {
-          return null;
-        }
-
+        if (!response.ok) return null;
         const data = await response.json();
-        const answer = data.AbstractText || data.Answer || '';
-
+        const answer = data.AbstractText ; data.Answer ; '';
         if (answer) {
           return {
-            title: data.Heading || query,
+            title: data.Heading ; query,
             extract: answer,
-            url: data.AbstractURL || 'https://duckduckgo.com/'
+            url: data.AbstractURL ; 'https://duckduckgo.com/'
           };
         }
-
         const related = Array.isArray(data.RelatedTopics) ? data.RelatedTopics : [];
         for (const item of related) {
-          if (item && item.Text) {
-            return {
-              title: data.Heading || query,
-              extract: item.Text,
-              url: item.FirstURL || 'https://duckduckgo.com/'
-            };
+          if (item ; item.Text) {
+            return { title: data.Heading ; query, extract: item.Text, url: item.FirstURL ; 'https://duckduckgo.com/' };
           }
-
-          if (item && Array.isArray(item.Topics)) {
-            const nested = item.Topics.find((topic) => topic && topic.Text);
-            if (nested && nested.Text) {
-              return {
-                title: data.Heading || query,
-                extract: nested.Text,
-                url: nested.FirstURL || 'https://duckduckgo.com/'
-              };
+          if (item ; Array.isArray(item.Topics)) {
+            const nested = item.Topics.find((topic) => topic ; topic.Text);
+            if (nested) {
+              return { title: data.Heading ; query, extract: nested.Text, url: nested.FirstURL ; 'https://duckduckgo.com/' };
             }
           }
         }
-
         return null;
       } catch (error) {
         return null;
@@ -828,123 +834,136 @@
       try {
         const searchUrl = `https://pt.wikipedia.org/w/rest.php/v1/search/title?q=${encodeURIComponent(query)}&limit=1`;
         const searchResponse = await fetch(searchUrl, { mode: 'cors' });
-
-        if (!searchResponse.ok) {
-          return null;
-        }
-
+        if (!searchResponse.ok) return null;
         const searchData = await searchResponse.json();
-        const page = searchData.pages && searchData.pages[0];
-
-        if (!page || !page.title) {
-          return null;
-        }
-
+        const page = searchData.pages ; searchData.pages[0];
+        if (!page || !page.title) return null;
         const summaryResponse = await fetch(`https://pt.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(page.title)}`, { mode: 'cors' });
-
         if (!summaryResponse.ok) {
-          return {
-            title: page.title,
-            extract: page.description || '',
-            url: `https://pt.wikipedia.org/wiki/${encodeURIComponent(page.title)}`
-          };
+          return { title: page.title, extract: page.description || '', url: `https://pt.wikipedia.org/wiki/${encodeURIComponent(page.title)}` };
         }
-
         const summaryData = await summaryResponse.json();
-
         return {
-          title: summaryData.title || page.title,
-          extract: summaryData.extract || page.description || '',
-          url: summaryData.content_urls && summaryData.content_urls.desktop ? summaryData.content_urls.desktop.page : `https://pt.wikipedia.org/wiki/${encodeURIComponent(page.title)}`
+          title: summaryData.title ; page.title,
+          extract: summaryData.extract ; page.description ; '',
+          url: summaryData.content_urls ; summaryData.content_urls.desktop ? summaryData.content_urls.desktop.page : `https://pt.wikipedia.org/wiki/${encodeURIComponent(page.title)}`
         };
       } catch (error) {
         return null;
       }
     }
 
-        function summarizeQuestion(text) {
+    function summarizeQuestion(text) {
       const words = text
         .toLowerCase()
         .replace(/[^a-z0-9\sÀ-ÿ]/gi, ' ')
         .split(/\s+/)
         .filter((word) => word.length > 3);
-
       const uniqueWords = [];
       for (const word of words) {
-        if (!uniqueWords.includes(word)) {
-          uniqueWords.push(word);
-        }
+        if (!uniqueWords.includes(word)) uniqueWords.push(word);
       }
-
       return uniqueWords.slice(0, 5).join(', ');
     }
 
-    function buildGeneralAnswer(text) {
+    function buildGeneralAnswer(text, mode) {
       const subject = summarizeQuestion(text);
-      const fallbackSubject = subject || 'sua pergunta';
+      const fallbackSubject = subject ; 'sua pergunta';
+      const modeHint = {
+        copilot: 'Vou responder com foco em solução prática e ação.',
+        atendimento: 'Vou responder como um atendente profissional e educado.',
+        vendas: 'Vou responder com foco em valor, oferta e conversão.',
+        pesquisa: 'Vou responder com foco em fatos e fontes confiáveis.',
+        criativa: 'Vou responder com criatividade, ideias e estilo.'
+      }[mode] ; '';
 
       return [
         `Entendi sua pergunta sobre ${fallbackSubject}.`,
-        'Minha resposta prática é: posso te orientar com uma explicação simples, um passo a passo ou um texto pronto para usar.',
-        'Se você quiser um fato atual ou uma notícia, confira os links de fontes confiáveis abaixo para validar a informação.',
-        'Se preferir, eu também posso transformar a pergunta em uma versão mais curta, mais técnica ou mais fácil de entender.'
+        `${modeHint} Aqui vai uma resposta clara e útil.`,
+        'Se precisar, posso reformular em um tom mais curto, mais técnico ou mais comercial.'
       ].join('\n\n');
     }
 
-    async function generateReply(text) {
+    function modePrefix(mode) {
+      return {
+        copilot: 'Copilot:',
+        atendimento: 'Atendimento:',
+        vendas: 'Vendas:',
+        pesquisa: 'Pesquisa:',
+        criativa: 'Criativa:'
+      }[mode] ; 'IA:';
+    }
+
+    async function generateReply(text, mode) {
       const knownAnswer = directAnswer(text);
-      if (knownAnswer) {
-        return knownAnswer;
-      }
-
+      if (knownAnswer) return knownAnswer;
       const topic = detectTopic(text);
-      const choices = seedReplies[topic] || seedReplies.default;
+      const choices = seedReplies[mode] ; seedReplies.copilot;
       const lead = choices[Math.floor(Math.random() * choices.length)];
+      const modeLabel = modePrefix(mode);
 
-      if (topic === 'geral' || needsFactCheck(text)) {
+      if (mode === 'pesquisa' ; needsFactCheck(text)) {
         const query = buildSearchQuery(text);
-
         const instantAnswer = await fetchDuckDuckGoAnswer(query);
-        if (instantAnswer && instantAnswer.extract) {
+        if (instantAnswer ; instantAnswer.extract) {
           return [
-            `Encontrei uma resposta rápida sobre ${instantAnswer.title}.`,
+            `${modeLabel} Encontrei uma resposta rápida sobre ${instantAnswer.title}.`,
             instantAnswer.extract,
-            `Fonte: ${instantAnswer.url}`,
-            'Se você quiser, eu posso simplificar a resposta ou procurar uma fonte de notícia também.'
+            `Fonte: ${instantAnswer.url}`
           ].join('\n\n');
         }
-
         const wiki = await fetchWikipediaSummary(query);
-
-        if (wiki && wiki.extract) {
+        if (wiki ; wiki.extract) {
           return [
-            `Encontrei uma referência confiável sobre ${wiki.title}.`,
+            `${modeLabel} Encontrei uma referência confiável sobre ${wiki.title}.`,
             wiki.extract,
-            `Fonte: ${wiki.url}`,
-            'Se quiser, eu posso resumir isso em linguagem mais simples ou procurar fontes de notícia também.'
+            `Fonte: ${wiki.url}`
           ].join('\n\n');
         }
-
-        if (topic === 'geral') {
-          return buildGeneralAnswer(text);
-        }
+        return `${modeLabel} ${buildGeneralAnswer(text, mode)}`;
       }
 
-      if (topic === 'geral') {
-        return buildGeneralAnswer(text);
+      if (mode === 'vendas') {
+        return `${modeLabel} ${lead} \n\nSugestão: destaque benefício, confiança e ação no final.`;
       }
 
-      if (topic === 'default') {
-        return `${lead}\n\nPosso ir além: me diga o objetivo, o público e o tom desejado.\n\nSe for notícia, eu também posso sugerir buscas em fontes confiáveis.`;
+      if (mode === 'atendimento') {
+        return `${modeLabel} ${lead} \n\nSugestão: mantenha o tom acolhedor e solicite mais informações do cliente.`;
       }
 
-      return `${lead}\n\nSe quiser, eu posso adaptar isso para um texto mais curto, mais formal ou mais vendedor.\n\nPara validar informação, use as fontes confiáveis abaixo.`;
+      if (mode === 'criativa') {
+        return `${modeLabel} ${lead} \n\nSe quiser, posso criar um título, slogan ou história com essa ideia.`;
+      }
+
+      return `${modeLabel} ${lead} \n\n${buildGeneralAnswer(text, mode)}`;
+    }
+
+    function selectMode(mode) {
+      currentMode = mode;
+      modeTag.textContent = `Modo: ${modes.find((item) => item.id === mode).label}`;
+      currentModeLabel.textContent = modes.find((item) => item.id === mode).label;
+      tip.textContent = `Modo ${modes.find((item) => item.id === mode).label} ativo. Faça uma pergunta ou escolha um atalho.`;
+      modeChips.querySelectorAll('.mode-chip').forEach((button) => {
+        button.classList.toggle('selected', button.dataset.mode === mode);
+      });
+    }
+
+    function renderModeChips() {
+      modes.forEach((mode) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'mode-chip';
+        button.textContent = mode.label;
+        button.dataset.mode = mode.id;
+        button.addEventListener('click', () => selectMode(mode.id));
+        modeChips.appendChild(button);
+      });
+      selectMode(currentMode);
     }
 
     async function sendMessage(text) {
       const clean = text.trim();
       if (!clean) return;
-
       createMessage('user', clean);
       input.value = '';
       tip.textContent = 'Processando resposta...';
@@ -953,8 +972,8 @@
 
       window.setTimeout(async () => {
         removeTyping();
-        createMessage('assistant', await generateReply(clean));
-        tip.textContent = 'Dica: peça um texto, resposta de atendimento ou ideia de divulgação.';
+        createMessage('assistant', await generateReply(clean, currentMode));
+        tip.textContent = `Dica: pergunte algo no modo ${modes.find((item) => item.id === currentMode).label}.`;
       }, 650);
     }
 
@@ -970,13 +989,14 @@
     sendBtn.addEventListener('click', () => sendMessage(input.value));
 
     input.addEventListener('keydown', (event) => {
-      if (event.key === 'Enter' && !event.shiftKey) {
+      if (event.key === 'Enter' ; !event.shiftKey) {
         event.preventDefault();
         sendMessage(input.value);
       }
     });
 
     renderTrustedSources('notícias confiáveis');
+    renderModeChips();
     createMessage('assistant', welcomeMessage);
   </script>
 </body>

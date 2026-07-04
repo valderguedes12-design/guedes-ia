@@ -1,38 +1,983 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Guedes IA</title>
-    <style>
-      :root { color-scheme: dark; }
-      body {
-        font-family: Arial, sans-serif;
-        margin: 0;
-        background: #07121f;
-        color: #f2f7ff;
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Guedes IA</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #07111f;
+      --bg-soft: #0b1b31;
+      --panel: rgba(12, 25, 44, 0.8);
+      --panel-strong: #10213c;
+      --line: rgba(148, 193, 255, 0.16);
+      --text: #eef5ff;
+      --muted: #9bb0cc;
+      --accent: #6ee7ff;
+      --accent-2: #82f7b8;
+      --danger: #ff8d8d;
+      --shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      background:
+        radial-gradient(circle at top left, rgba(110, 231, 255, 0.18), transparent 30%),
+        radial-gradient(circle at right 15%, rgba(130, 247, 184, 0.12), transparent 26%),
+        linear-gradient(135deg, #050a13 0%, var(--bg) 45%, #09192e 100%);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 36px 36px;
+      mask-image: radial-gradient(circle at center, black 35%, transparent 100%);
+      opacity: 0.35;
+    }
+
+    .shell {
+      width: min(1200px, calc(100% - 32px));
+      margin: 16px auto;
+      min-height: calc(100vh - 32px);
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      gap: 16px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      backdrop-filter: blur(18px);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .sidebar {
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      background:
+        linear-gradient(180deg, rgba(110, 231, 255, 0.06), transparent 18%),
+        linear-gradient(180deg, rgba(255,255,255,0.02), transparent 60%),
+        var(--panel);
+    }
+
+    .brand {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+    }
+
+    .brand-mark {
+      width: 58px;
+      height: 58px;
+      border-radius: 18px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(145deg, rgba(110, 231, 255, 0.95), rgba(130, 247, 184, 0.85));
+      color: #04111d;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 800;
+      font-size: 24px;
+      box-shadow: 0 16px 36px rgba(110, 231, 255, 0.22);
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 28px;
+      line-height: 1;
+      letter-spacing: -0.03em;
+    }
+
+    .brand p {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .status {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 16px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: rgba(8, 18, 31, 0.55);
+    }
+
+    .status-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .pulse {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--accent-2);
+      box-shadow: 0 0 0 0 rgba(130, 247, 184, 0.6);
+      animation: pulse 1.8s infinite;
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(130, 247, 184, 0.55); }
+      70% { box-shadow: 0 0 0 12px rgba(130, 247, 184, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(130, 247, 184, 0); }
+    }
+
+    .status strong {
+      display: block;
+      font-size: 14px;
+      margin-bottom: 2px;
+    }
+
+    .status span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .chip {
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.03);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.18s ease, background 0.18s ease, border-color 0.18s ease;
+    }
+
+    .chip:hover {
+      transform: translateY(-1px);
+      border-color: rgba(110, 231, 255, 0.4);
+      background: rgba(110, 231, 255, 0.08);
+    }
+
+    .card {
+      padding: 18px;
+      border-radius: 20px;
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+    }
+
+    .card h2 {
+      margin: 0 0 8px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 18px;
+      letter-spacing: -0.02em;
+    }
+
+    .card p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    .source-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .source-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.03);
+      color: var(--text);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 600;
+      transition: transform 0.18s ease, background 0.18s ease, border-color 0.18s ease;
+    }
+
+    .source-link:hover {
+      transform: translateY(-1px);
+      border-color: rgba(110, 231, 255, 0.35);
+      background: rgba(110, 231, 255, 0.08);
+    }
+
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .metric {
+      padding: 16px;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: rgba(6, 13, 25, 0.52);
+    }
+
+    .metric b {
+      display: block;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 20px;
+      margin-bottom: 4px;
+    }
+
+    .metric span {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .main {
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      min-height: 0;
+    }
+
+    .topbar {
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      border-bottom: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), transparent);
+    }
+
+    .topbar h2 {
+      margin: 0;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 22px;
+      letter-spacing: -0.03em;
+    }
+
+    .topbar small {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .topbar .tag {
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(110, 231, 255, 0.24);
+      background: rgba(110, 231, 255, 0.08);
+      color: #cbefff;
+      font-size: 13px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .chat {
+      padding: 24px;
+      overflow: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .message {
+      display: flex;
+      gap: 12px;
+      max-width: 92%;
+      animation: rise 0.25s ease-out;
+    }
+
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .message.user {
+      margin-left: auto;
+      flex-direction: row-reverse;
+    }
+
+    .avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 14px;
+      flex: 0 0 auto;
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      font-size: 14px;
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    .message.user .avatar {
+      background: linear-gradient(145deg, rgba(110, 231, 255, 0.95), rgba(130, 247, 184, 0.9));
+      color: #02111d;
+    }
+
+    .message.assistant .avatar {
+      background: linear-gradient(145deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+      color: var(--accent);
+      border: 1px solid var(--line);
+    }
+
+    .bubble {
+      padding: 14px 16px;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      line-height: 1.6;
+      font-size: 15px;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .message.user .bubble {
+      background: linear-gradient(145deg, rgba(110, 231, 255, 0.16), rgba(130, 247, 184, 0.12));
+      border-color: rgba(110, 231, 255, 0.28);
+    }
+
+    .message.assistant .bubble {
+      background: rgba(255,255,255,0.03);
+    }
+
+    .typing {
+      display: inline-flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .typing span {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+      opacity: 0.55;
+      animation: bounce 1.2s infinite ease-in-out;
+    }
+
+    .typing span:nth-child(2) { animation-delay: 0.15s; }
+    .typing span:nth-child(3) { animation-delay: 0.3s; }
+
+    @keyframes bounce {
+      0%, 80%, 100% { transform: translateY(0); opacity: 0.4; }
+      40% { transform: translateY(-5px); opacity: 1; }
+    }
+
+    .composer {
+      padding: 18px;
+      border-top: 1px solid var(--line);
+      background: linear-gradient(180deg, transparent, rgba(255,255,255,0.02));
+    }
+
+    .composer-bar {
+      display: flex;
+      gap: 12px;
+      padding: 12px;
+      border-radius: 22px;
+      border: 1px solid var(--line);
+      background: rgba(6, 13, 25, 0.68);
+      align-items: end;
+    }
+
+    textarea {
+      flex: 1;
+      min-height: 52px;
+      max-height: 180px;
+      resize: vertical;
+      border: 0;
+      outline: 0;
+      background: transparent;
+      color: var(--text);
+      font: inherit;
+      line-height: 1.5;
+      padding: 8px 10px;
+    }
+
+    textarea::placeholder {
+      color: #6f84a5;
+    }
+
+    .send {
+      border: 0;
+      cursor: pointer;
+      padding: 14px 18px;
+      border-radius: 16px;
+      font-weight: 800;
+      color: #04111d;
+      background: linear-gradient(145deg, #6ee7ff, #82f7b8);
+      transition: transform 0.18s ease, filter 0.18s ease;
+      font-family: 'Space Grotesk', sans-serif;
+      letter-spacing: -0.01em;
+    }
+
+    .send:hover { transform: translateY(-1px); filter: brightness(1.04); }
+    .send:active { transform: translateY(0); }
+
+    .footer-note {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      padding: 12px 4px 0;
+      color: var(--muted);
+      font-size: 12px;
+      flex-wrap: wrap;
+    }
+
+    .footer-note strong {
+      color: #dbeafe;
+    }
+
+    @media (max-width: 980px) {
+      .shell {
+        grid-template-columns: 1fr;
       }
-      main {
-        max-width: 760px;
-        margin: 0 auto;
-        padding: 48px 20px 64px;
+
+      .sidebar {
+        order: 2;
       }
-      .card {
-        background: rgba(9, 19, 34, 0.9);
-        border: 1px solid rgba(110, 231, 255, 0.25);
-        border-radius: 20px;
-        padding: 24px;
+    }
+
+    @media (max-width: 640px) {
+      .shell {
+        width: min(100% - 16px, 1200px);
+        margin: 8px auto;
       }
-      a { color: #6ee7ff; }
-    </style>
-  </head>
-  <body>
-    <main>
-      <div class="card">
-        <h1>Guedes IA</h1>
-        <p>Esta é a página IA principal do site. Use o link abaixo para voltar à página inicial.</p>
-        <p><a href="../">Voltar para a página inicial</a></p>
+
+      .panel {
+        border-radius: 22px;
+      }
+
+      .sidebar, .topbar, .chat, .composer {
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+
+      .topbar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .message {
+        max-width: 100%;
+      }
+
+      .metric-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <aside class="panel sidebar">
+      <div class="brand">
+        <div class="brand-mark">IA</div>
+        <div>
+          <h1>Guedes IA</h1>
+          <p>Assistente local com respostas rápidas, útil para atendimento, ideias e suporte.</p>
+        </div>
       </div>
-    </main>
-  </body>
+
+      <div class="status">
+        <div class="status-left">
+          <div class="pulse"></div>
+          <div>
+            <strong>Online e pronta</strong>
+            <span>sem backend, rodando no navegador</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Atalhos</h2>
+        <p>Clique em um tema para iniciar a conversa com um exemplo de uso.</p>
+        <div class="chip-row" id="chips"></div>
+      </div>
+
+      <div class="card">
+        <h2>O que ela faz</h2>
+          <p>Responde perguntas simples, sugere próximos passos e pode servir como base para integrar uma API de IA real depois.</p>
+          <div class="source-list" id="sourceList"></div>
+      </div>
+
+      <div class="metric-grid">
+        <div class="metric">
+          <b id="msgCount">0</b>
+          <span>mensagens na conversa</span>
+        </div>
+        <div class="metric">
+          <b>100%</b>
+          <span>funciona offline no HTML</span>
+        </div>
+      </div>
+    </aside>
+
+    <section class="panel main">
+      <header class="topbar">
+        <div>
+          <h2>Assistente de conversa</h2>
+          <small>Digite sua dúvida e receba uma resposta contextual em tempo real.</small>
+        </div>
+        <div class="tag">IA Demo • pronta para personalizar</div>
+      </header>
+
+      <div class="chat" id="chat"></div>
+
+      <div class="composer">
+        <div class="composer-bar">
+          <textarea id="input" placeholder="Escreva algo como: quero ajuda para divulgar minha assistência técnica"></textarea>
+          <button class="send" id="sendBtn">Enviar</button>
+        </div>
+        <div class="footer-note">
+          <span>Pressione <strong>Enter</strong> para enviar, <strong>Shift+Enter</strong> para quebrar linha.</span>
+          <span id="tip">Exemplo: peça um texto, ideia de atendimento ou resumo.</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const chat = document.getElementById('chat');
+    const input = document.getElementById('input');
+    const sendBtn = document.getElementById('sendBtn');
+    const msgCount = document.getElementById('msgCount');
+    const chips = document.getElementById('chips');
+    const tip = document.getElementById('tip');
+    const sourceList = document.getElementById('sourceList');
+
+    const quickPrompts = [
+      'Me ajude a divulgar minha assistência técnica',
+      'Crie uma mensagem profissional para WhatsApp',
+      'Quero ideias de atendimento ao cliente',
+      'Resuma um texto de forma clara',
+      'Monte uma resposta educada para cobrança'
+    ];
+
+    const trustedSources = [
+      { label: 'Google News', domain: 'news.google.com' },
+      { label: 'Reuters', domain: 'reuters.com' },
+      { label: 'Associated Press', domain: 'apnews.com' },
+      { label: 'BBC', domain: 'bbc.com' },
+      { label: 'Agência Brasil', domain: 'agenciabrasil.ebc.com.br' },
+      { label: 'G1', domain: 'g1.globo.com' }
+    ];
+
+    const stopWords = new Set([
+      'a', 'o', 'os', 'as', 'um', 'uma', 'uns', 'umas', 'de', 'da', 'do', 'das', 'dos', 'em', 'no', 'na', 'nos', 'nas',
+      'para', 'por', 'com', 'sem', 'sobre', 'que', 'quem', 'qual', 'quais', 'quando', 'onde', 'como', 'porque', 'porquê',
+      'e', 'ou', 'é', 'ser', 'foi', 'são', 'era', 'eu', 'tu', 'ele', 'ela', 'nós', 'vos', 'vocês', 'me', 'te', 'se'
+    ]);
+
+    const seedReplies = {
+      default: [
+        'Posso ajudar com divulgação, atendimento, textos, organização e ideias rápidas. Tente pedir algo específico e eu monto a resposta.',
+        'Se quiser, posso transformar sua ideia em uma mensagem para WhatsApp, um roteiro de atendimento ou um texto de venda.'
+      ],
+      atendimento: [
+        'Para atendimento, recomendo uma resposta curta, clara e com próxima ação. Exemplo: "Olá! Podemos te ajudar agora. Me envie seu nome e o que você precisa."',
+        'Se o cliente estiver com urgência, vale confirmar o problema, informar o próximo passo e passar um prazo objetivo.'
+      ],
+      whatsapp: [
+        'Mensagem pronta para WhatsApp: "Olá! Tudo bem? Somos da Guedes IA e podemos te ajudar com suporte, manutenção e orientações rápidas."',
+        'Se quiser, eu também posso adaptar o texto para algo mais formal, curto ou comercial.'
+      ],
+      divulgacao: [
+        'Uma boa divulgação mistura benefício e ação. Exemplo: "Seu celular com problema? Fale com a gente e receba atendimento rápido e garantia no serviço."',
+        'Se quiser mais alcance, eu posso criar legenda, anúncio, status e texto para cartão de visita.'
+      ],
+      cobranca: [
+        'Cobrança educada: "Olá! Passando para lembrar sobre o andamento do seu atendimento. Se precisar, posso te atualizar por aqui."',
+        'O melhor tom é firme, educado e objetivo. Evite mensagem longa demais.'
+      ],
+      geral: [
+        'Posso responder de forma direta, explicar por partes ou transformar sua pergunta em um passo a passo prático.',
+        'Se a pergunta for sobre um fato atual, eu também posso te mostrar buscas em fontes confiáveis para conferir a informação.'
+      ]
+    };
+
+    const welcomeMessage = 'Olá! Eu sou a Guedes IA. Escreva uma dúvida ou clique em um atalho para começar.';
+
+    function updateCount() {
+      msgCount.textContent = String(chat.querySelectorAll('.message').length);
+    }
+
+    function scrollChat() {
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    function createMessage(role, text) {
+      const row = document.createElement('div');
+      row.className = `message ${role}`;
+
+      const avatar = document.createElement('div');
+      avatar.className = 'avatar';
+      avatar.textContent = role === 'user' ? 'EU' : 'IA';
+
+      const bubble = document.createElement('div');
+      bubble.className = 'bubble';
+      bubble.textContent = text;
+
+      row.appendChild(avatar);
+      row.appendChild(bubble);
+      chat.appendChild(row);
+      updateCount();
+      scrollChat();
+    }
+
+    function createTyping() {
+      const row = document.createElement('div');
+      row.className = 'message assistant';
+      row.id = 'typing';
+
+      const avatar = document.createElement('div');
+      avatar.className = 'avatar';
+      avatar.textContent = 'IA';
+
+      const bubble = document.createElement('div');
+      bubble.className = 'bubble';
+      bubble.innerHTML = '<span class="typing"><span></span><span></span><span></span></span>';
+
+      row.appendChild(avatar);
+      row.appendChild(bubble);
+      chat.appendChild(row);
+      scrollChat();
+    }
+
+    function removeTyping() {
+      const typing = document.getElementById('typing');
+      if (typing) typing.remove();
+    }
+
+    function normalizeText(text) {
+      return text
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '');
+    }
+
+    function extractKeywords(text) {
+      const words = normalizeText(text)
+        .replace(/[^a-z0-9\s]/g, ' ')
+        .split(/\s+/)
+        .filter((word) => word.length > 2 && !stopWords.has(word));
+
+      const uniqueWords = [];
+      for (const word of words) {
+        if (!uniqueWords.includes(word)) {
+          uniqueWords.push(word);
+        }
+      }
+
+      return uniqueWords.slice(0, 6);
+    }
+
+    function buildSearchQuery(text) {
+      const keywords = extractKeywords(text);
+      return keywords.length ? keywords.join(' ') : text.trim();
+    }
+
+    function buildSearchUrl(query, domain) {
+      const cleaned = query.trim();
+      return `https://www.google.com/search?q=${encodeURIComponent(cleaned + ' site:' + domain)}`;
+    }
+
+    function buildNewsUrl(query) {
+      return `https://news.google.com/search?q=${encodeURIComponent(query.trim())}&hl=pt-BR&gl=BR&ceid=BR:pt-419`;
+    }
+
+    function renderTrustedSources(query) {
+      sourceList.innerHTML = '';
+      if (!query.trim()) return;
+
+      const newsLink = document.createElement('a');
+      newsLink.className = 'source-link';
+      newsLink.href = buildNewsUrl(query);
+      newsLink.target = '_blank';
+      newsLink.rel = 'noopener noreferrer';
+      newsLink.textContent = 'Google News';
+      sourceList.appendChild(newsLink);
+
+      trustedSources.slice(1, 4).forEach((source) => {
+        const anchor = document.createElement('a');
+        anchor.className = 'source-link';
+        anchor.href = buildSearchUrl(query, source.domain);
+        anchor.target = '_blank';
+        anchor.rel = 'noopener noreferrer';
+        anchor.textContent = source.label;
+        sourceList.appendChild(anchor);
+      });
+    }
+
+    function detectTopic(text) {
+      const value = normalizeText(text);
+      if (value.includes('quem') || value.includes('qual') || value.includes('quando') || value.includes('onde') || value.includes('por que') || value.includes('porque') || value.includes('como')) return 'geral';
+      if (value.includes('whatsapp') || value.includes('mensagem')) return 'whatsapp';
+      if (value.includes('atendimento') || value.includes('cliente')) return 'atendimento';
+      if (value.includes('divul') || value.includes('anúncio') || value.includes('anuncio') || value.includes('marketing')) return 'divulgacao';
+      if (value.includes('cobran') || value.includes('pagamento') || value.includes('lembrete')) return 'cobranca';
+      return 'default';
+    }
+
+    function needsFactCheck(text) {
+      const normalized = normalizeText(text);
+      const keywordCount = extractKeywords(text).length;
+      if (/^(quem|qual|quais|quando|onde|como|por que|porque)\b/.test(normalized)) {
+        return true;
+      }
+
+      return keywordCount >= 3 || normalized.includes('?');
+    }
+
+    function directAnswer(text) {
+      const normalized = normalizeText(text);
+
+      if (normalized.includes('quem e o presidente do brasil') || normalized.includes('quem e presidente do brasil') || normalized.includes('presidente do brasil')) {
+        return 'O presidente do Brasil é Luiz Inácio Lula da Silva, o Lula. Se quiser, eu também posso responder com o nome completo ou com uma explicação mais curta.';
+      }
+
+      if (normalized.includes('qual e a capital do brasil') || normalized.includes('capital do brasil')) {
+        return 'A capital do Brasil é Brasília.';
+      }
+
+      if (normalized.includes('qual e a capital de portugal') || normalized.includes('capital de portugal')) {
+        return 'A capital de Portugal é Lisboa.';
+      }
+
+      if (normalized.includes('qual e a capital da franca') || normalized.includes('capital da franca')) {
+        return 'A capital da França é Paris.';
+      }
+
+      return null;
+    }
+
+    async function fetchDuckDuckGoAnswer(query) {
+      try {
+        const url = `https://api.duckduckgo.com/?q=${encodeURIComponent(query)}&format=json&no_redirect=1&no_html=1&skip_disambig=1`;
+        const response = await fetch(url, { mode: 'cors' });
+
+        if (!response.ok) {
+          return null;
+        }
+
+        const data = await response.json();
+        const answer = data.AbstractText || data.Answer || '';
+
+        if (answer) {
+          return {
+            title: data.Heading || query,
+            extract: answer,
+            url: data.AbstractURL || 'https://duckduckgo.com/'
+          };
+        }
+
+        const related = Array.isArray(data.RelatedTopics) ? data.RelatedTopics : [];
+        for (const item of related) {
+          if (item && item.Text) {
+            return {
+              title: data.Heading || query,
+              extract: item.Text,
+              url: item.FirstURL || 'https://duckduckgo.com/'
+            };
+          }
+
+          if (item && Array.isArray(item.Topics)) {
+            const nested = item.Topics.find((topic) => topic && topic.Text);
+            if (nested && nested.Text) {
+              return {
+                title: data.Heading || query,
+                extract: nested.Text,
+                url: nested.FirstURL || 'https://duckduckgo.com/'
+              };
+            }
+          }
+        }
+
+        return null;
+      } catch (error) {
+        return null;
+      }
+    }
+
+    async function fetchWikipediaSummary(query) {
+      try {
+        const searchUrl = `https://pt.wikipedia.org/w/rest.php/v1/search/title?q=${encodeURIComponent(query)}&limit=1`;
+        const searchResponse = await fetch(searchUrl, { mode: 'cors' });
+
+        if (!searchResponse.ok) {
+          return null;
+        }
+
+        const searchData = await searchResponse.json();
+        const page = searchData.pages && searchData.pages[0];
+
+        if (!page || !page.title) {
+          return null;
+        }
+
+        const summaryResponse = await fetch(`https://pt.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(page.title)}`, { mode: 'cors' });
+
+        if (!summaryResponse.ok) {
+          return {
+            title: page.title,
+            extract: page.description || '',
+            url: `https://pt.wikipedia.org/wiki/${encodeURIComponent(page.title)}`
+          };
+        }
+
+        const summaryData = await summaryResponse.json();
+
+        return {
+          title: summaryData.title || page.title,
+          extract: summaryData.extract || page.description || '',
+          url: summaryData.content_urls && summaryData.content_urls.desktop ? summaryData.content_urls.desktop.page : `https://pt.wikipedia.org/wiki/${encodeURIComponent(page.title)}`
+        };
+      } catch (error) {
+        return null;
+      }
+    }
+
+        function summarizeQuestion(text) {
+      const words = text
+        .toLowerCase()
+        .replace(/[^a-z0-9\sÀ-ÿ]/gi, ' ')
+        .split(/\s+/)
+        .filter((word) => word.length > 3);
+
+      const uniqueWords = [];
+      for (const word of words) {
+        if (!uniqueWords.includes(word)) {
+          uniqueWords.push(word);
+        }
+      }
+
+      return uniqueWords.slice(0, 5).join(', ');
+    }
+
+    function buildGeneralAnswer(text) {
+      const subject = summarizeQuestion(text);
+      const fallbackSubject = subject || 'sua pergunta';
+
+      return [
+        `Entendi sua pergunta sobre ${fallbackSubject}.`,
+        'Minha resposta prática é: posso te orientar com uma explicação simples, um passo a passo ou um texto pronto para usar.',
+        'Se você quiser um fato atual ou uma notícia, confira os links de fontes confiáveis abaixo para validar a informação.',
+        'Se preferir, eu também posso transformar a pergunta em uma versão mais curta, mais técnica ou mais fácil de entender.'
+      ].join('\n\n');
+    }
+
+    async function generateReply(text) {
+      const knownAnswer = directAnswer(text);
+      if (knownAnswer) {
+        return knownAnswer;
+      }
+
+      const topic = detectTopic(text);
+      const choices = seedReplies[topic] || seedReplies.default;
+      const lead = choices[Math.floor(Math.random() * choices.length)];
+
+      if (topic === 'geral' || needsFactCheck(text)) {
+        const query = buildSearchQuery(text);
+
+        const instantAnswer = await fetchDuckDuckGoAnswer(query);
+        if (instantAnswer && instantAnswer.extract) {
+          return [
+            `Encontrei uma resposta rápida sobre ${instantAnswer.title}.`,
+            instantAnswer.extract,
+            `Fonte: ${instantAnswer.url}`,
+            'Se você quiser, eu posso simplificar a resposta ou procurar uma fonte de notícia também.'
+          ].join('\n\n');
+        }
+
+        const wiki = await fetchWikipediaSummary(query);
+
+        if (wiki && wiki.extract) {
+          return [
+            `Encontrei uma referência confiável sobre ${wiki.title}.`,
+            wiki.extract,
+            `Fonte: ${wiki.url}`,
+            'Se quiser, eu posso resumir isso em linguagem mais simples ou procurar fontes de notícia também.'
+          ].join('\n\n');
+        }
+
+        if (topic === 'geral') {
+          return buildGeneralAnswer(text);
+        }
+      }
+
+      if (topic === 'geral') {
+        return buildGeneralAnswer(text);
+      }
+
+      if (topic === 'default') {
+        return `${lead}\n\nPosso ir além: me diga o objetivo, o público e o tom desejado.\n\nSe for notícia, eu também posso sugerir buscas em fontes confiáveis.`;
+      }
+
+      return `${lead}\n\nSe quiser, eu posso adaptar isso para um texto mais curto, mais formal ou mais vendedor.\n\nPara validar informação, use as fontes confiáveis abaixo.`;
+    }
+
+    async function sendMessage(text) {
+      const clean = text.trim();
+      if (!clean) return;
+
+      createMessage('user', clean);
+      input.value = '';
+      tip.textContent = 'Processando resposta...';
+      createTyping();
+      renderTrustedSources(clean);
+
+      window.setTimeout(async () => {
+        removeTyping();
+        createMessage('assistant', await generateReply(clean));
+        tip.textContent = 'Dica: peça um texto, resposta de atendimento ou ideia de divulgação.';
+      }, 650);
+    }
+
+    quickPrompts.forEach((prompt) => {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'chip';
+      button.textContent = prompt;
+      button.addEventListener('click', () => sendMessage(prompt));
+      chips.appendChild(button);
+    });
+
+    sendBtn.addEventListener('click', () => sendMessage(input.value));
+
+    input.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' && !event.shiftKey) {
+        event.preventDefault();
+        sendMessage(input.value);
+      }
+    });
+
+    renderTrustedSources('notícias confiáveis');
+    createMessage('assistant', welcomeMessage);
+  </script>
+</body>
 </html>

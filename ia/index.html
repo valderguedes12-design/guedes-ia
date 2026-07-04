@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
@@ -506,7 +506,7 @@
         <div class="brand-mark">IA</div>
         <div>
           <h1>Guedes IA</h1>
-          <p>Assistente Copilot com várias personalidades integradas para responder a tudo.</p>
+          <p>Assistente Copilot com v�rias personalidades integradas para responder a tudo.</p>
         </div>
       </div>
 
@@ -533,8 +533,8 @@
       </div>
 
       <div class="card">
-        <h2>Fontes confiáveis</h2>
-        <p>Use esses links como referência rápida para validar temas e notícias.</p>
+        <h2>Fontes confi�veis</h2>
+        <p>Use esses links como refer�ncia r�pida para validar temas e not�cias.</p>
         <div class="source-list" id="sourceList"></div>
       </div>
 
@@ -587,21 +587,21 @@
     const currentModeLabel = document.getElementById('currentModeLabel');
 
     const modes = [
-      { id: 'copilot', label: 'Copilot', description: 'Foco em soluções práticas, explicações e tarefas rápidas.' },
+      { id: 'copilot', label: 'Copilot', description: 'Foco em solu��es pr�ticas, explica��es e tarefas r�pidas.' },
       { id: 'atendimento', label: 'Atendimento', description: 'Respostas gentis, orientadas ao cliente e ao suporte.' },
-      { id: 'vendas', label: 'Vendas', description: 'Textos persuasivos e sugestões para promover serviços.' },
-      { id: 'pesquisa', label: 'Pesquisa', description: 'Busca de fatos, referências e fontes confiáveis.' },
-      { id: 'criativa', label: 'Criativa', description: 'Respostas inventivas, ideias e conteúdo original.' }
+      { id: 'vendas', label: 'Vendas', description: 'Textos persuasivos e sugest�es para promover servi�os.' },
+      { id: 'pesquisa', label: 'Pesquisa', description: 'Busca de fatos, refer�ncias e fontes confi�veis.' },
+      { id: 'criativa', label: 'Criativa', description: 'Respostas inventivas, ideias e conte�do original.' }
     ];
 
     let currentMode = 'copilot';
 
     const quickPrompts = [
-      'Me ajude a divulgar minha assistência técnica',
+      'Me ajude a divulgar minha assist�ncia t�cnica',
       'Crie uma mensagem profissional para WhatsApp',
       'Quero ideias de atendimento ao cliente',
       'Resuma um texto de forma clara',
-      'Monte uma resposta educada para cobrança'
+      'Monte uma resposta educada para cobran�a'
     ];
 
     const trustedSources = [
@@ -609,40 +609,40 @@
       { label: 'Reuters', domain: 'reuters.com' },
       { label: 'Associated Press', domain: 'apnews.com' },
       { label: 'BBC', domain: 'bbc.com' },
-      { label: 'Agência Brasil', domain: 'agenciabrasil.ebc.com.br' },
+      { label: 'Ag�ncia Brasil', domain: 'agenciabrasil.ebc.com.br' },
       { label: 'G1', domain: 'g1.globo.com' }
     ];
 
     const stopWords = new Set([
       'a', 'o', 'os', 'as', 'um', 'uma', 'uns', 'umas', 'de', 'da', 'do', 'das', 'dos', 'em', 'no', 'na', 'nos', 'nas',
-      'para', 'por', 'com', 'sem', 'sobre', 'que', 'quem', 'qual', 'quais', 'quando', 'onde', 'como', 'porque', 'porquê',
-      'e', 'ou', 'é', 'ser', 'foi', 'são', 'era', 'eu', 'tu', 'ele', 'ela', 'nós', 'vos', 'vocês', 'me', 'te', 'se'
+      'para', 'por', 'com', 'sem', 'sobre', 'que', 'quem', 'qual', 'quais', 'quando', 'onde', 'como', 'porque', 'porqu�',
+      'e', 'ou', '�', 'ser', 'foi', 's�o', 'era', 'eu', 'tu', 'ele', 'ela', 'n�s', 'vos', 'voc�s', 'me', 'te', 'se'
     ]);
 
     const seedReplies = {
       copilot: [
-        'Como seu assistente Copilot, posso te ajudar a resolver tarefas, criar textos e responder dúvidas com clareza.',
-        'Vamos transformar sua pergunta em uma solução prática e organizada. Me diga o que precisa.'
+        'Como seu assistente Copilot, posso te ajudar a resolver tarefas, criar textos e responder d�vidas com clareza.',
+        'Vamos transformar sua pergunta em uma solu��o pr�tica e organizada. Me diga o que precisa.'
       ],
       atendimento: [
         'No modo atendimento, vou sugerir respostas gentis, claras e voltadas ao cliente.',
-        'Fico pronto para ajudar com agendamento, suporte e orientação em linguagem simples.'
+        'Fico pronto para ajudar com agendamento, suporte e orienta��o em linguagem simples.'
       ],
       vendas: [
-        'Modo vendas ativo: vou gerar textos com tom persuasivo, focados em conversão e valor.',
-        'Preciso de pouco para criar um texto comercial que chame atenção do cliente.'
+        'Modo vendas ativo: vou gerar textos com tom persuasivo, focados em convers�o e valor.',
+        'Preciso de pouco para criar um texto comercial que chame aten��o do cliente.'
       ],
       pesquisa: [
-        'Modo pesquisa ativo: vou tentar buscar fatos e fontes confiáveis para sua pergunta.',
-        'Se houver resposta factual, vou mostrar título, resumo e link para referência.'
+        'Modo pesquisa ativo: vou tentar buscar fatos e fontes confi�veis para sua pergunta.',
+        'Se houver resposta factual, vou mostrar t�tulo, resumo e link para refer�ncia.'
       ],
       criativa: [
-        'Modo criativa ativo: respondo com ideias originais, títulos e propostas diferentes.',
-        'Peça uma frase criativa, slogan ou conceito e eu crio algo novo.'
+        'Modo criativa ativo: respondo com ideias originais, t�tulos e propostas diferentes.',
+        'Pe�a uma frase criativa, slogan ou conceito e eu crio algo novo.'
       ]
     };
 
-    const welcomeMessage = 'Olá! Eu sou a Guedes IA. Escolha um modo e escreva sua dúvida para receber uma resposta ajustada ao seu objetivo.';
+    const welcomeMessage = 'Ol�! Eu sou a Guedes IA. Escolha um modo e escreva sua d�vida para receber uma resposta ajustada ao seu objetivo.';
 
     function updateCount() {
       msgCount.textContent = String(chat.querySelectorAll('.message').length);
@@ -699,21 +699,14 @@
       return text
         .toLowerCase()
         .normalize('NFD')
-        .replace(/[]/g, (c) => c)
-        .replace(/[]/g, (c) => c)
-        .replace(/[]/g, (c) => c)
-        .replace(/[]/g, (c) => c)
-        .replace(/[]/g, (c) => c)
-        .replace(/[]/g, (c) => c)
-        .replace(/[]/g, (c) => c)
-        .replace(/[]/g, '');
+        .replace(/[\u0300-\u036f]/g, '');
     }
 
     function extractKeywords(text) {
       const words = normalizeText(text)
         .replace(/[^a-z0-9\s]/g, ' ')
         .split(/\s+/)
-        .filter((word) => word.length > 2 ; !stopWords.has(word));
+        .filter((word) => word.length > 2 && !stopWords.has(word));
 
       const uniqueWords = [];
       for (const word of words) {
@@ -764,10 +757,10 @@
 
     function detectTopic(text) {
       const value = text.toLowerCase();
-      if (value.includes('whatsapp') ; value.includes('mensagem')) return 'whatsapp';
-      if (value.includes('atendimento') ; value.includes('cliente')) return 'atendimento';
-      if (value.includes('divul') ; value.includes('anúncio') ; value.includes('anuncio') ; value.includes('marketing')) return 'divulgacao';
-      if (value.includes('cobran') ; value.includes('pagamento') ; value.includes('lembrete')) return 'cobranca';
+      if (value.includes('whatsapp') || value.includes('mensagem')) return 'whatsapp';
+      if (value.includes('atendimento') || value.includes('cliente')) return 'atendimento';
+      if (value.includes('divul') || value.includes('an�ncio') || value.includes('anuncio') || value.includes('marketing')) return 'divulgacao';
+      if (value.includes('cobran') || value.includes('pagamento') || value.includes('lembrete')) return 'cobranca';
       if (value.match(/\b(quem|qual|quais|quando|onde|como|por que|porque)\b/)) return 'geral';
       return 'default';
     }
@@ -778,49 +771,49 @@
       if (/^(quem|qual|quais|quando|onde|como|por que|porque)\b/.test(normalized)) {
         return true;
       }
-      return keywordCount >= 3 ; normalized.includes('?');
+      return keywordCount >= 3 || normalized.includes('?');
     }
 
     function directAnswer(text) {
       const normalized = text.toLowerCase();
       if (normalized.includes('presidente do brasil')) {
-        return 'O presidente do Brasil é Luiz Inácio Lula da Silva, o Lula. Se quiser, posso contar mais sobre o governo ou a política atual.';
+        return 'O presidente do Brasil � Luiz In�cio Lula da Silva, o Lula. Se quiser, posso contar mais sobre o governo ou a pol�tica atual.';
       }
       if (normalized.includes('capital do brasil')) {
-        return 'A capital do Brasil é Brasília.';
+        return 'A capital do Brasil � Bras�lia.';
       }
       if (normalized.includes('capital de portugal')) {
-        return 'A capital de Portugal é Lisboa.';
+        return 'A capital de Portugal � Lisboa.';
       }
-      if (normalized.includes('capital da frança')) {
-        return 'A capital da França é Paris.';
+      if (normalized.includes('capital da fran�a') || normalized.includes('capital da franca')) {
+        return 'A capital da Fran�a � Paris.';
       }
       return null;
     }
 
     async function fetchDuckDuckGoAnswer(query) {
       try {
-        const url = `https://api.duckduckgo.com/?q=${encodeURIComponent(query)}&format=json;&no_redirect=1;&no_html=1;&skip_disambig=1`;
+        const url = `https://api.duckduckgo.com/?q=${encodeURIComponent(query)}&format=json&no_redirect=1&no_html=1&skip_disambig=1`;
         const response = await fetch(url, { mode: 'cors' });
         if (!response.ok) return null;
         const data = await response.json();
-        const answer = data.AbstractText ; data.Answer ; '';
+        const answer = data.AbstractText || data.Answer || '';
         if (answer) {
           return {
-            title: data.Heading ; query,
+            title: data.Heading || query,
             extract: answer,
-            url: data.AbstractURL ; 'https://duckduckgo.com/'
+            url: data.AbstractURL || 'https://duckduckgo.com/'
           };
         }
         const related = Array.isArray(data.RelatedTopics) ? data.RelatedTopics : [];
         for (const item of related) {
-          if (item ; item.Text) {
-            return { title: data.Heading ; query, extract: item.Text, url: item.FirstURL ; 'https://duckduckgo.com/' };
+          if (item && item.Text) {
+            return { title: data.Heading || query, extract: item.Text, url: item.FirstURL || 'https://duckduckgo.com/' };
           }
-          if (item ; Array.isArray(item.Topics)) {
-            const nested = item.Topics.find((topic) => topic ; topic.Text);
+          if (item && Array.isArray(item.Topics)) {
+            const nested = item.Topics.find((topic) => topic && topic.Text);
             if (nested) {
-              return { title: data.Heading ; query, extract: nested.Text, url: nested.FirstURL ; 'https://duckduckgo.com/' };
+              return { title: data.Heading || query, extract: nested.Text, url: nested.FirstURL || 'https://duckduckgo.com/' };
             }
           }
         }
@@ -836,7 +829,7 @@
         const searchResponse = await fetch(searchUrl, { mode: 'cors' });
         if (!searchResponse.ok) return null;
         const searchData = await searchResponse.json();
-        const page = searchData.pages ; searchData.pages[0];
+        const page = searchData.pages && searchData.pages[0];
         if (!page || !page.title) return null;
         const summaryResponse = await fetch(`https://pt.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(page.title)}`, { mode: 'cors' });
         if (!summaryResponse.ok) {
@@ -844,9 +837,9 @@
         }
         const summaryData = await summaryResponse.json();
         return {
-          title: summaryData.title ; page.title,
-          extract: summaryData.extract ; page.description ; '',
-          url: summaryData.content_urls ; summaryData.content_urls.desktop ? summaryData.content_urls.desktop.page : `https://pt.wikipedia.org/wiki/${encodeURIComponent(page.title)}`
+          title: summaryData.title || page.title,
+          extract: summaryData.extract || page.description || '',
+          url: summaryData.content_urls && summaryData.content_urls.desktop ? summaryData.content_urls.desktop.page : `https://pt.wikipedia.org/wiki/${encodeURIComponent(page.title)}`
         };
       } catch (error) {
         return null;
@@ -856,7 +849,7 @@
     function summarizeQuestion(text) {
       const words = text
         .toLowerCase()
-        .replace(/[^a-z0-9\sÀ-ÿ]/gi, ' ')
+        .replace(/[^a-z0-9\s�-�]/gi, ' ')
         .split(/\s+/)
         .filter((word) => word.length > 3);
       const uniqueWords = [];
@@ -868,19 +861,19 @@
 
     function buildGeneralAnswer(text, mode) {
       const subject = summarizeQuestion(text);
-      const fallbackSubject = subject ; 'sua pergunta';
+      const fallbackSubject = subject || 'sua pergunta';
       const modeHint = {
-        copilot: 'Vou responder com foco em solução prática e ação.',
+        copilot: 'Vou responder com foco em solu��o pr�tica e a��o.',
         atendimento: 'Vou responder como um atendente profissional e educado.',
-        vendas: 'Vou responder com foco em valor, oferta e conversão.',
-        pesquisa: 'Vou responder com foco em fatos e fontes confiáveis.',
+        vendas: 'Vou responder com foco em valor, oferta e convers�o.',
+        pesquisa: 'Vou responder com foco em fatos e fontes confi�veis.',
         criativa: 'Vou responder com criatividade, ideias e estilo.'
-      }[mode] ; '';
+      }[mode] || '';
 
       return [
         `Entendi sua pergunta sobre ${fallbackSubject}.`,
-        `${modeHint} Aqui vai uma resposta clara e útil.`,
-        'Se precisar, posso reformular em um tom mais curto, mais técnico ou mais comercial.'
+        `${modeHint} Aqui vai uma resposta clara e �til.`,
+        'Se precisar, posso reformular em um tom mais curto, mais t�cnico ou mais comercial.'
       ].join('\n\n');
     }
 
@@ -891,31 +884,31 @@
         vendas: 'Vendas:',
         pesquisa: 'Pesquisa:',
         criativa: 'Criativa:'
-      }[mode] ; 'IA:';
+      }[mode] || 'IA:';
     }
 
     async function generateReply(text, mode) {
       const knownAnswer = directAnswer(text);
       if (knownAnswer) return knownAnswer;
       const topic = detectTopic(text);
-      const choices = seedReplies[mode] ; seedReplies.copilot;
+      const choices = seedReplies[mode] || seedReplies.copilot;
       const lead = choices[Math.floor(Math.random() * choices.length)];
       const modeLabel = modePrefix(mode);
 
-      if (mode === 'pesquisa' ; needsFactCheck(text)) {
+      if (mode === 'pesquisa' || needsFactCheck(text)) {
         const query = buildSearchQuery(text);
         const instantAnswer = await fetchDuckDuckGoAnswer(query);
-        if (instantAnswer ; instantAnswer.extract) {
+        if (instantAnswer && instantAnswer.extract) {
           return [
-            `${modeLabel} Encontrei uma resposta rápida sobre ${instantAnswer.title}.`,
+            `${modeLabel} Encontrei uma resposta r�pida sobre ${instantAnswer.title}.`,
             instantAnswer.extract,
             `Fonte: ${instantAnswer.url}`
           ].join('\n\n');
         }
         const wiki = await fetchWikipediaSummary(query);
-        if (wiki ; wiki.extract) {
+        if (wiki && wiki.extract) {
           return [
-            `${modeLabel} Encontrei uma referência confiável sobre ${wiki.title}.`,
+            `${modeLabel} Encontrei uma refer�ncia confi�vel sobre ${wiki.title}.`,
             wiki.extract,
             `Fonte: ${wiki.url}`
           ].join('\n\n');
@@ -924,15 +917,15 @@
       }
 
       if (mode === 'vendas') {
-        return `${modeLabel} ${lead} \n\nSugestão: destaque benefício, confiança e ação no final.`;
+        return `${modeLabel} ${lead} \n\nSugest�o: destaque benef�cio, confian�a e a��o no final.`;
       }
 
       if (mode === 'atendimento') {
-        return `${modeLabel} ${lead} \n\nSugestão: mantenha o tom acolhedor e solicite mais informações do cliente.`;
+        return `${modeLabel} ${lead} \n\nSugest�o: mantenha o tom acolhedor e solicite mais informa��es do cliente.`;
       }
 
       if (mode === 'criativa') {
-        return `${modeLabel} ${lead} \n\nSe quiser, posso criar um título, slogan ou história com essa ideia.`;
+        return `${modeLabel} ${lead} \n\nSe quiser, posso criar um t�tulo, slogan ou hist�ria com essa ideia.`;
       }
 
       return `${modeLabel} ${lead} \n\n${buildGeneralAnswer(text, mode)}`;
@@ -942,7 +935,7 @@
       currentMode = mode;
       modeTag.textContent = `Modo: ${modes.find((item) => item.id === mode).label}`;
       currentModeLabel.textContent = modes.find((item) => item.id === mode).label;
-      tip.textContent = `Modo ${modes.find((item) => item.id === mode).label} ativo. Faça uma pergunta ou escolha um atalho.`;
+      tip.textContent = `Modo ${modes.find((item) => item.id === mode).label} ativo. Fa�a uma pergunta ou escolha um atalho.`;
       modeChips.querySelectorAll('.mode-chip').forEach((button) => {
         button.classList.toggle('selected', button.dataset.mode === mode);
       });
@@ -989,15 +982,16 @@
     sendBtn.addEventListener('click', () => sendMessage(input.value));
 
     input.addEventListener('keydown', (event) => {
-      if (event.key === 'Enter' ; !event.shiftKey) {
+      if (event.key === 'Enter' && !event.shiftKey) {
         event.preventDefault();
         sendMessage(input.value);
       }
     });
 
-    renderTrustedSources('notícias confiáveis');
+    renderTrustedSources('not�cias confi�veis');
     renderModeChips();
     createMessage('assistant', welcomeMessage);
   </script>
 </body>
 </html>
+

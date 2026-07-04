@@ -908,12 +908,12 @@
         const wiki = await fetchWikipediaSummary(query);
         if (wiki && wiki.extract) {
           return [
-            `${modeLabel} Encontrei uma refer�ncia confi�vel sobre ${wiki.title}.`,
+            `${modeLabel} Encontrei uma referência confiável sobre ${wiki.title}.`,
             wiki.extract,
             `Fonte: ${wiki.url}`
           ].join('\n\n');
         }
-        return `${modeLabel} ${buildGeneralAnswer(text, mode)}`;
+        return buildFallbackSearchReply(text, mode);
       }
 
       if (mode === 'vendas') {

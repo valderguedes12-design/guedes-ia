@@ -863,17 +863,29 @@
       const subject = summarizeQuestion(text);
       const fallbackSubject = subject || 'sua pergunta';
       const modeHint = {
-        copilot: 'Vou responder com foco em solu��o pr�tica e a��o.',
+        copilot: 'Vou responder com foco em solução prática e ação.',
         atendimento: 'Vou responder como um atendente profissional e educado.',
-        vendas: 'Vou responder com foco em valor, oferta e convers�o.',
-        pesquisa: 'Vou responder com foco em fatos e fontes confi�veis.',
+        vendas: 'Vou responder com foco em valor, oferta e conversão.',
+        pesquisa: 'Vou responder com foco em fatos e fontes confiáveis.',
         criativa: 'Vou responder com criatividade, ideias e estilo.'
       }[mode] || '';
 
       return [
         `Entendi sua pergunta sobre ${fallbackSubject}.`,
-        `${modeHint} Aqui vai uma resposta clara e �til.`,
-        'Se precisar, posso reformular em um tom mais curto, mais t�cnico ou mais comercial.'
+        `${modeHint} Aqui vai uma resposta clara e útil.`,
+        'Se precisar, posso reformular em um tom mais curto, mais técnico ou mais comercial.'
+      ].join('\n\n');
+    }
+
+    function buildFallbackSearchReply(text, mode) {
+      const query = buildSearchQuery(text);
+      const googleLink = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+      const wikipediaLink = `https://pt.wikipedia.org/wiki/${encodeURIComponent(query.replace(/\s+/g, '_'))}`;
+      return [
+        `${modePrefix(mode)} Não consegui uma resposta direta, mas aqui estão fontes confiáveis para validar o tema:`,
+        `Google: ${googleLink}`,
+        `Wikipedia: ${wikipediaLink}`,
+        'Se quiser, posso transformar essas referências em uma resposta completa para seu uso.'
       ].join('\n\n');
     }
 
@@ -908,12 +920,12 @@
         const wiki = await fetchWikipediaSummary(query);
         if (wiki && wiki.extract) {
           return [
-            `${modeLabel} Encontrei uma refer�ncia confi�vel sobre ${wiki.title}.`,
+            `${modeLabel} Encontrei uma referência confiável sobre ${wiki.title}.`,
             wiki.extract,
             `Fonte: ${wiki.url}`
           ].join('\n\n');
         }
-        return `${modeLabel} ${buildGeneralAnswer(text, mode)}`;
+        return buildFallbackSearchReply(text, mode);
       }
 
       if (mode === 'vendas') {

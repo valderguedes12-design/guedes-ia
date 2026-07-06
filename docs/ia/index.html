@@ -789,6 +789,11 @@
         return 'A capital da França é Paris.';
       }
 
+      const simplified = normalizeText(text);
+      if (simplified.includes('quantos dias') && simplified.includes('ano')) {
+        return 'Um ano tem 365 dias. Em anos bissextos, tem 366 dias.';
+      }
+
       if (
         normalized.includes('chatbots prontos') ||
         normalized.includes('chatbot pronto') ||

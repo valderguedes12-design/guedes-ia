@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Guedes IA - Protótipo Flask</title>
+    <style>
+      body{font-family:Arial,Helvetica,sans-serif;margin:0;padding:16px;background:#f5f5f5}
+      .container{max-width:800px;margin:0 auto;background:#fff;padding:20px;border-radius:8px}
+      .messages{height:400px;overflow:auto;border:1px solid #eee;padding:10px;margin-bottom:10px}
+      .msg.user{color:#0b5;}
+      .msg.ai{color:#05f}
+      .input-row{display:flex}
+      input[type=text]{flex:1;padding:8px;font-size:16px}
+      button{padding:8px 12px;margin-left:8px}
+      .bubble{background:#f1f1f1;padding:8px;border-radius:6px;margin:6px 0}
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>Guedes IA — Protótipo Flask</h2>
+      <div class="messages" id="messages"></div>
+      <div class="input-row">
+        <input id="input" type="text" placeholder="Digite sua pergunta e pressione Enter" />
+        <button id="send">Enviar</button>
+      </div>
+    </div>
+    <script>
+      const messages = document.getElementById('messages');
+      const input = document.getElementById('input');
+      const send = document.getElementById('send');
+
+      function addMessage(text, cls){
+        const d = document.createElement('div');
+        d.className = 'bubble ' + (cls||'');
+        d.textContent = text;
+        messages.appendChild(d);
+        messages.scrollTop = messages.scrollHeight;
+      }
+
+      async function sendMessage(){
+        const text = input.value.trim();
+        if(!text) return;
+        addMessage(text, 'user');
+        input.value = '';
+        addMessage('...', 'ai');
+        const res = await fetch('/api/chat', {
+          method: 'POST',
+          headers: {'Content-Type':'application/json'},
+          body: JSON.stringify({message: text})
+        });
+        const json = await res.json();
+        // remove last placeholder
+        const last = messages.lastChild;
+        if (last && last.textContent === '...') last.remove();
+        addMessage(json.reply, 'ai');
+      }
+
+      send.addEventListener('click', sendMessage);
+      input.addEventListener('keydown', (e)=>{ if(e.key==='Enter') sendMessage() });
+    </script>
+  </body>
+</html>

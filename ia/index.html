@@ -954,7 +954,7 @@
             `Fonte: ${wiki.url}`
           ].join('\n\n');
         }
-        return buildFallbackSearchReply(text, mode);
+        return `${modeLabel} ${buildGeneralAnswer(text, mode)}`;
       }
 
       if (mode === 'vendas') {
